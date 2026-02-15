@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { uploadToCloudinary } from '@/lib/cloudinary';
+
 
 // GET /api/signals — public (limited) or authenticated (full)
 export async function GET(req: NextRequest) {
@@ -88,20 +88,8 @@ export async function POST(req: NextRequest) {
         }
 
         let imageUrl = null;
-        if (file && file.size > 0) {
-            try {
-                const bytes = await file.arrayBuffer();
-                const buffer = Buffer.from(bytes);
-
-                // Upload to Cloudinary
-                imageUrl = await uploadToCloudinary(buffer, 'uv-market/signals');
-            } catch (err) {
-                console.error('Image upload failed:', err);
-                // Fallback or error? For now, we allow signal creation without image if upload fails, unless critical.
-                // But better to fail if user expects image.
-                return NextResponse.json({ error: 'Failed to upload image. Check Cloudinary config.' }, { status: 500 });
-            }
-        }
+        // Image upload disabled for now as Cloudinary was removed.
+        // if (file && file.size > 0) { ... }
 
         const signal = await prisma.signal.create({
             data: {
