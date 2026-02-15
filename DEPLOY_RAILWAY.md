@@ -34,6 +34,9 @@ Go to your **App Service** (the core app) -> **Variables** tab. Add the followin
 | `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` | Auto-links to your new Postgres DB. |
 | `NEXTAUTH_SECRET` | (Generate a random string) | Run `openssl rand -base64 32` to get one. |
 | `NEXTAUTH_URL` | `https://<your-service-url>.up.railway.app` | The public URL Railway assigns you. |
+| `CLOUDINARY_CLOUD_NAME` | `your_cloud_name` | Create a free account at [cloudinary.com](https://cloudinary.com) |
+| `CLOUDINARY_API_KEY` | `your_api_key` | Found in Cloudinary Dashboard |
+| `CLOUDINARY_API_SECRET` | `your_api_secret` | Found in Cloudinary Dashboard |
 
 ## Step 5: Update Schema (for Postgres)
 Since you are switching from SQLite to Postgres, you need to:

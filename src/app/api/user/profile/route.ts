@@ -1,8 +1,8 @@
-
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
+import { uploadToCloudinary } from '@/lib/cloudinary';
 
 export async function PUT(req: Request) {
     try {
@@ -12,18 +12,26 @@ export async function PUT(req: Request) {
         }
 
         const body = await req.json();
-        const { photoUrl } = body;
+        let { photoUrl } = body;
 
-        // Basic validation
+        // Validation
         if (photoUrl && typeof photoUrl !== 'string') {
             return NextResponse.json({ error: 'Invalid photo format' }, { status: 400 });
         }
 
+        // If it's a base64 string, upload to Cloudinary
+        if (photoUrl && photoUrl.startsWith('data:image')) {
+            try {
+                photoUrl = await uploadToCloudinary(photoUrl, 'uv-market/profiles');
+            } catch (uploadError) {
+                console.error('Cloudinary upload failed:', uploadError);
+                return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });
+            }
+        }
+
         const updatedUser = await prisma.user.update({
             where: { email: session.user.email },
-            data: {
-                photoUrl: photoUrl
-            },
+            data: { photoUrl },
             select: {
                 id: true,
                 name: true,
